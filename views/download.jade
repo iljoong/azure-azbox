@@ -1,0 +1,9 @@
+extends layout
+
+block content
+
+  h3 download link
+
+  p this file will expire in #{config.expireday} days
+  div
+    a(href="#{url}") #{url}

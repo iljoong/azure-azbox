@@ -1,0 +1,35 @@
+extends layout
+
+block content
+
+    h3 config search
+
+    div(class="row")
+    if step.done
+        p setup completed
+    else if step.error
+        p setup error
+        pre=error
+    else
+        if !step.datasource
+            div(class="list-group-item disabled") Create Datasource
+        else
+            div(class="list-group-item ") Create Datasource
+                form(name="setup" action="/setup/datasource" method="post")
+                    input(type="submit", value="Run" id="setup")   
+
+        if !step.index
+            div(class="list-group-item disabled") Create Index
+        else 
+            div(class="list-group-item") Create Index
+                form(name="setup" action="/setup/createindex" method="post")
+                    input(type="submit", value="Run", id="setup")
+
+        if !step.indexer
+            div(class="list-group-item disabled") Create Indexer
+        else
+            div(class="list-group-item ") Create Indexer
+                form(name="setup" action="/setup/createindexer" method="post")
+                    input(type="submit", value="Run", id="setup")
+
+                        

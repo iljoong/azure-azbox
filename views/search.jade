@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  
+    if (!config.searchApiKey)
+        p search service is not available
+    else  
+        div(class="row")
+            h3 search keyword: #{keyword}
+            if (results)
+                table.table.table-striped
+                    tr
+                        th search score
+                        th file name
+                        th author
+                        th size (byte)
+                    each item in results
+                        tr
+                            td #{item.score}
+                            td
+                                a(href='/sas/#{item.file}') #{item.path}
+                            td #{item.author}
+                            td #{item.fileSize}

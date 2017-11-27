@@ -1,0 +1,29 @@
+extends layout
+
+block content
+
+    h4 upload file
+    form
+        div.form-group 
+            input.form-control-file(type="file" id="files" name="files[]" aria-describedby="msgstatus" multiple="multiple")
+            small.form-tesxt.text-muted(id="msgstatus") Upload file
+    
+    output(id="list")
+    div(id="uploadedImage",class="row")
+
+    h3 Files
+    table.table.table-striped
+        tr
+            th file name
+            th date
+            th size (byte)
+        each item in blobs
+            tr
+                td
+                    a(href='/sas/#{item.name}') https://#{config.accountName}.blob.core.windows.net/#{config.containerName}/#{item.name}
+                td #{item.lastModified}
+                td #{item.contentLength}
+
+    script(type='text/javascript' src='/javascripts/upload.js')
+    
+    
