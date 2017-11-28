@@ -6,4 +6,8 @@ block content
 
   p this file will expire in #{config.expireday} days
   div
-    a(href="#{url}") #{url}
+    a(href="#{url}" id="copyurl") #{url}
+  div
+    button(id='copyclip' onclick="copyclip('#copyurl')") Copy to Clipboard
+
+  script(type='text/javascript' src='/javascripts/copyclip.js')

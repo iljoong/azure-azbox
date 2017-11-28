@@ -1,5 +1,9 @@
-function renderImage(ajaxRequest, blobSasUri) {
-    if (ajaxRequest.readyState == 4) { // xmlhttp.status==200 == successful request
+/* 
+ * upload.js: modified from original MSFT sample
+ */
+function showStatus(ajaxRequest, blobSasUri) {
+    if (ajaxRequest.readyState == 4) { 
+        // xmlhttp.status==200 == successful request
         //var $image = $('<img src="' + blobSasUri + '" alt="" />');
         //$("#uploadedImage").prepend($image);
         $("#msgstatus").prepend("<br>uploaded: " + blobSasUri);
@@ -33,13 +37,13 @@ function getExtension(url) {
 // The Web Browser will add the necessary CORS headers and issue a preflight request if needed.
 // blobSasUrl: Blob SAS URL already obtained through an Ajax call to own server side.
 // fileDataAsArrayBuffer: an ArrayBuffer (Byte Array) containing the raw data of the file to be uploaded
-function uploadImage(blobSasUrl, fileDataAsArrayBuffer) {
+function uploadFile(blobSasUrl, fileDataAsArrayBuffer) {
 
     $("#msgstatus").prepend("<br>start uploading");
 
     var ajaxRequest = new XMLHttpRequest();
 
-    ajaxRequest.onreadystatechange = function () { return renderImage(ajaxRequest, blobSasUrl) };
+    ajaxRequest.onreadystatechange = function () { return showStatus(ajaxRequest, blobSasUrl) };
 
     try {
         // Performing an PutBlob (BlockBlob) against storage
@@ -116,7 +120,7 @@ function handleFileSelect(evt) {
                         blobSasUrl = xhr.responseText;
                         // Now we have the right SAS url that we will use to upload the image
                         // Pass in the SAS URL and the ArrayBuffer to be uploaded
-                        uploadImage(blobSasUrl, e.target.result);
+                        uploadFile(blobSasUrl, e.target.result);
                     },
                     error: function (res, status, xhr) {
                         alert("can't get sas from the server");

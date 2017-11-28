@@ -12,6 +12,8 @@ module.exports = {
     "schIndex": "doc-index",
     "schIndexer": "doc-indexer",
 
+    "pageSize": process.env.PAGE_SIZE || 20,
+    
     "expireday": 7
 };
 

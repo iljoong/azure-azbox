@@ -4,6 +4,7 @@ var router = express.Router();
 var request = require('request');
 var storage = require('azure-storage');
 
+var search = require('./search.js');
 var _config = require('./config.js');
 
 /* GET home page. */
@@ -54,19 +55,24 @@ function aggregateBlobs(err, result, cb) {
   }
 }
 
-router.get('/sas/:blobName', function (req, res, next) {
+//router.get('/sas/:blobName', function (req, res, next) {
+router.get('/sas', function (req, res, next) {
 
-  console.log("get '/sas/" + req.params.blobName + "'");
+  //var blobName = req.params.blobName;
+  var blobName = req.query.f;
+
+  //console.log("get '/sas/" + req.params.blobName + "'");
+  console.log("get '/sas/" + blobName + "'");
 
   var cn = _config.connectionString;
   var blobService = storage.createBlobService(cn);
 
-  var blockBlobName = req.params.blobName;
+  var blockBlobName = blobName;
   var container = req.query.container ? req.query.container : _config.containerName;
 
   var expiryDate = new Date();
   //expiryDate.setMinutes(expiryDate.getMinutes() + 30);
-  expiryDate.setDate(expiryDate.getDate() + 1 * _config.expireday); 
+  expiryDate.setDate(expiryDate.getDate() + 1 * _config.expireday);
 
   var sharedAccessPolicy = {
     AccessPolicy: {
@@ -79,7 +85,7 @@ router.get('/sas/:blobName', function (req, res, next) {
   var sasUrl = blobService.getUrl(container, blockBlobName, sas);
 
   //res.send(sasUrl);
-  res.render('download', {url: sasUrl, config: _config });
+  res.render('download', { url: sasUrl, config: _config });
 
 });
 
@@ -108,58 +114,46 @@ router.get('/sasurl', function (req, res) {
 
 });
 
-// search
-router.get('/search', function (req, res, next) {
-
-  res.render('search', { title: "Search", config: _config, results: null });
-
-});
-
 router.post('/search', function (req, res, next) {
 
-  if (!_config.searchAccount) {
-    res.render('search',  {config: _config, results: null, keyword: null});
+  var keyword = req.body.keyword;
+  var page = 1;
+
+  if (!_config.searchAccount || !keyword) {
+    res.render('search', { config: _config, results: null, keyword: null });
   } else {
-    var keyword = req.body.keyword;
-    var encodeKeyword = encodeURIComponent(keyword);
-    console.log("post '/search',", encodeKeyword);
-  
-    var config = {
-      uri: `https://${_config.searchAccount}.search.windows.net/indexes/${_config.schIndex}/docs?api-version=2015-02-28&search=${encodeKeyword}`,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': _config.searchApiKey
-      },
-      json: true
-    };
-  
-    request(config, function (err, resp, body) {
-      if (err) {
-        res.render('error', { error: err });
-      }
-      else {
-  
-        var results = body.value;
-  
-        var urlpath = `https://${_config.accountName}.blob.core.windows.net/${_config.containerName}/`;
-  
-        results.forEach(function (element) {
-          // get only filename from full urlpath
-          element.file = element.path.replace(urlpath, "");
-          element.file = decodeURIComponent(element.file);
-          element.score = element['@search.score'];
-        }, this);
-  
-        //console.log(JSON.stringify(body));
-        res.render('search',  {config: _config, results: results, keyword: keyword});
-      }
-  
+
+    console.log("post '/search',", keyword);
+
+    search.getSearchResult(1, keyword, function (err, resp, results, pcount, count) {
+
+      //console.log(JSON.stringify(body));
+      res.render('search', { config: _config, results: results, keyword: keyword, page: page, pagecount: pcount, count: count});
+
     });
-      
   }
 
 });
 
+router.get('/search', function (req, res, next) {
+
+    var page = req.query.page;
+    var keyword = req.query.keyword;
+
+    if (!_config.searchAccount || !keyword || !page) {
+      res.render('search', { config: _config, results: null, keyword: null });
+    } else {
+
+      console.log("get '/search',", keyword);
+  
+      search.getSearchResult(page, keyword, function (err, resp, results, pcount, count) {
+  
+        //console.log(JSON.stringify(body));
+        res.render('search', { config: _config, results: results, keyword: keyword, page: page, pagecount: pcount, count: count});
+  
+      });
+    }
+  
+  });
 
 module.exports = router;

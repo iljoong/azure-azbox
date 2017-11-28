@@ -26,12 +26,14 @@ You can enable text search with built-in indexer in Azure Search [1]
 
 Note that AzBox works without search service
 
-## Run
+## Run (local test)
 
 ```
 npm install
 npm start
 ```
+
+browse `http://localhost:3000`
 
 ## Deploy to Azure Webapp
 

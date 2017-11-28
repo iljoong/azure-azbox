@@ -20,7 +20,7 @@ block content
         each item in blobs
             tr
                 td
-                    a(href='/sas/#{item.name}') https://#{config.accountName}.blob.core.windows.net/#{config.containerName}/#{item.name}
+                    a(href='/sas?f=#{item.name}') #{item.name}
                 td #{item.lastModified}
                 td #{item.contentLength}
 
