@@ -11,7 +11,11 @@ It makes file sharing using fileshare link and one can set expiry day (default i
 
 2. Create a new container
 
-3. Add storage account name, key and connection string in `/routes/config.js` or set environment variable
+4. Add 'Allowed Origin' in CORS setting
+
+    - You can add `*` for Dev/Test but it is recommend to add 'website url' for production
+
+5. Add storage account name, key and connection string in `/routes/config.js` or set environment variable
 
 ## Enable Search service
 
