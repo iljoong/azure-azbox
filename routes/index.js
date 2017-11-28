@@ -128,7 +128,7 @@ router.post('/search', function (req, res, next) {
     search.getSearchResult(1, keyword, function (err, resp, results, pcount, count) {
 
       //console.log(JSON.stringify(body));
-      res.render('search', { config: _config, results: results, keyword: keyword, page: page, pagecount: pcount, count: count});
+      res.render('search', { config: _config, results: results, keyword: keyword, page: page, pagecount: pcount, count: count });
 
     });
   }
@@ -137,23 +137,28 @@ router.post('/search', function (req, res, next) {
 
 router.get('/search', function (req, res, next) {
 
-    var page = req.query.page;
-    var keyword = req.query.keyword;
+  var page = req.query.page;
+  var keyword = req.query.keyword;
 
-    if (!_config.searchAccount || !keyword || !page) {
-      res.render('search', { config: _config, results: null, keyword: null });
-    } else {
+  if (!_config.searchAccount || !keyword || !page) {
+    res.render('search', { config: _config, results: null, keyword: null });
+  } else {
 
-      console.log("get '/search',", keyword);
-  
-      search.getSearchResult(page, keyword, function (err, resp, results, pcount, count) {
-  
-        //console.log(JSON.stringify(body));
-        res.render('search', { config: _config, results: results, keyword: keyword, page: page, pagecount: pcount, count: count});
-  
-      });
-    }
-  
-  });
+    console.log("get '/search',", keyword);
+
+    search.getSearchResult(page, keyword, function (err, resp, results, pcount, count) {
+
+      //console.log(JSON.stringify(body));
+      res.render('search', { config: _config, results: results, keyword: keyword, page: page, pagecount: pcount, count: count });
+
+    });
+  }
+
+});
+
+router.get('/upload', function (req, res, next) {
+
+  res.render('upload', { config: _config });
+});
 
 module.exports = router;

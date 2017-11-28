@@ -105,8 +105,11 @@ function handleFileSelect(evt) {
         // Create a reader that would read the entire file data as ArrayBuffer
         var reader = new FileReader();
 
+        var folder = $('#folder').val();
+        //alert(folder);
+        
         // AJAX URL that would be used to request an Azure Blob SAS URL
-        file.azureUri = "/sasurl" + "?blobName=" + file.name + "&ts=" + ts;
+        file.azureUri = "/sasurl" + "?blobName=" + folder + "%2F" +  file.name + "&ts=" + ts;
 
         reader.onloadend = (function (theFile) {
             return function (e) {
