@@ -3,12 +3,12 @@ extends layout
 block content
 
     h4 upload file
+    div
+        p Upload to folder /
+            input(type="text" id="folder")
     form
         div.form-group 
             input.form-control-file(type="file" id="files" name="files[]" aria-describedby="msgstatus" multiple="multiple")
             small.form-tesxt.text-muted(id="msgstatus") Upload file
-    div
-        p Upload to folder (default is root of container)
-        input(type="text" id="folder")
     
     script(type='text/javascript' src='/javascripts/upload.js')

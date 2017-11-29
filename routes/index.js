@@ -12,8 +12,11 @@ router.get('/', function (req, res, next) {
   res.render('index', { config: _config });
 });
 
+var opt = { delimiter: "" };
 var blobs = [];
-router.get('/share', function (req, res, next) {
+
+/*
+router.get('/list', function (req, res, next) {
 
   var container = req.query.container ? req.query.container : _config.containerName;
 
@@ -38,15 +41,46 @@ router.get('/share', function (req, res, next) {
   });
 
 });
+*/
 
-function aggregateBlobs(err, result, cb) {
+// THIS IS EXPERIMENTAL
+router.get('/list', function (req, res, next) {
+
+  var container = req.query.container ? req.query.container : _config.containerName;
+  //var folder = (req.params.folder) ?  req.params.folder + "/" : "";
+  // /list?d="xxxx/sssss"
+  var folder = (req.query.d) ?  req.query.d + "/" : "";
+
+  var cn = _config.connectionString;
+  var blobService = storage.createBlobService(cn);
+
+  blobs = [];
+  blobService.getContainerProperties(container, function (err, resul) {
+    blobService.listBlobsSegmentedWithPrefix(container, folder, null, opt, function (err, result) {
+      aggregateBlobs(folder, err, result, function (err, blobs) {
+        if (err) {
+          //console.log("Couldn't list blobs");
+          console.error(err);
+        } else {
+          //console.log(blobs);
+        }
+        res.render('share', {config: _config, blobs: blobs, count: blobs.length });
+      });
+    });
+  });
+
+});
+
+function aggregateBlobs(folder, err, result, cb) {
   if (err) {
     cb(er);
   } else {
     blobs = blobs.concat(result.entries);
     if (result.continuationToken !== null) {
-      blobService.listBlobsSegmented(
+      blobService.listBlobsSegmentedWithPrefix(
         containerName,
+        folder,
+        opt,
         result.continuationToken,
         aggregateBlobs);
     } else {
@@ -54,6 +88,7 @@ function aggregateBlobs(err, result, cb) {
     }
   }
 }
+
 
 //router.get('/sas/:blobName', function (req, res, next) {
 router.get('/sas', function (req, res, next) {
