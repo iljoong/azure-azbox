@@ -3,7 +3,7 @@
 AzBox is a simple file share service using Azure blob storage and Azure search.
 It makes file sharing using fileshare link and one can set expiry day (default is 7 days) of the link.
 
-![AzBox](./azbox.png)
+![AzBox](./azbox.gif)
 
 ## Configure blob storage
 
@@ -11,7 +11,7 @@ It makes file sharing using fileshare link and one can set expiry day (default i
 
 2. Create a new container
 
-4. Add 'Allowed Origin' in CORS setting
+4. Add **'Allowed Origin'** in CORS setting
 
     - You can add `*` for Dev/Test but it is recommend to add 'website url' for production
 
@@ -26,7 +26,7 @@ You can enable text search with built-in indexer in Azure Search [1]
 2. Add `search account name` and `api key` in `/routes/config.js` or set environment variable
 
 3. Use AzBox portal to setup search service
-    click `setup` tab or browse `/setup`
+    click `setup search service` link in the front page or browse `/setup`
 
 Note that AzBox works without search service
 
@@ -42,7 +42,11 @@ browse `http://localhost:3000`
 ## Deploy to Azure Webapp
 
 You can deploy this source to Azure Webapp.
-It is recommended to configure `auth/authz for AAD` for security [2]
+It is recommended to configure `auth/authz` settings for security [2]
+
+## TODO
+
+Directory browsing
 
 ## Reference
 
