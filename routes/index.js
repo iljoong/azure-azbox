@@ -3,6 +3,7 @@ var router = express.Router();
 
 var request = require('request');
 var storage = require('azure-storage');
+var dateFormat = require('dateformat');
 
 var search = require('./search.js');
 var _config = require('./config.js');
@@ -43,13 +44,27 @@ router.get('/list', function (req, res, next) {
 });
 */
 
+Array.prototype.sortByProp = function (p) {
+  return this.sort(function (a, b) {
+    return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;
+  });
+};
+
+Array.prototype.sortByPropDec = function (p) {
+  return this.sort(function (a, b) {
+    return (a[p] < b[p]) ? 1 : (a[p] > b[p]) ? -1 : 0;
+  });
+};
+
+
 // THIS IS EXPERIMENTAL
 router.get('/list', function (req, res, next) {
 
   var container = req.query.container ? req.query.container : _config.containerName;
   //var folder = (req.params.folder) ?  req.params.folder + "/" : "";
   // /list?d="xxxx/sssss"
-  var folder = (req.query.d) ?  req.query.d + "/" : "";
+  var folder = (req.query.d) ? req.query.d + '/' : "";
+  var sort = (req.query.s) ? req.query.s : 'name';
 
   var cn = _config.connectionString;
   var blobService = storage.createBlobService(cn);
@@ -64,7 +79,17 @@ router.get('/list', function (req, res, next) {
         } else {
           //console.log(blobs);
         }
-        res.render('share', {config: _config, blobs: blobs, count: blobs.length });
+
+        if (sort == 'date') {
+          blobs.forEach(function (element) {
+            element.date = dateFormat(element.lastModified, 'isoDateTime');
+          }, this);
+        }
+
+        res.render('share', {
+          config: _config, blobs: (sort == 'name') ? blobs : blobs.sortByPropDec('date'),
+          count: blobs.length
+        });
       });
     });
   });

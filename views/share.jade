@@ -5,8 +5,10 @@ block content
     p #{count} files in this blob
     table.table.table-striped
         tr
-            th file name
-            th date
+            th 
+                a(href="/list?s=name") file name
+            th
+                a(href="/list?s=date") date
             th size (byte)
         each item in blobs
             tr
